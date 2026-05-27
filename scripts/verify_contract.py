@@ -82,7 +82,6 @@ def verify_acceptance_inventory() -> None:
         "docs/coursework.md",
         "docs/contract.md",
         "docs/linza.detector-rest-api.yml",
-        "docs/defense_guide.md",
         "docs/time_based_report.sample.json",
         "src/api.py",
         "src/contract.py",

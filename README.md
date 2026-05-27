@@ -27,7 +27,6 @@
 | ПЗ 8 | [docs/pz8.md](docs/pz8.md) | дедупликация текста и склейка детекций в треки |
 | Курсовая | [docs/coursework.md](docs/coursework.md) | общий pipeline и итоговая логика скоринга |
 | Контракт | [docs/contract.md](docs/contract.md) | соответствие REST API контракту «Линза.Детектор» |
-| Защита | [docs/defense_guide.md](docs/defense_guide.md) | порядок демонстрации и ответы на типовые вопросы |
 
 ## Структура
 
@@ -49,7 +48,7 @@ coursework/
 │   ├── pz7_openrouter.py        # ПЗ 7, текстовая LLM через OpenRouter
 │   ├── pz7_vlm_gemini.py        # ПЗ 7, VLM через OpenRouter
 │   └── pz8_postprocess.py       # ПЗ 8
-├── docs/                        # описание ПЗ, курсовой, деплоя, контракта и защиты
+├── docs/                        # описание ПЗ, курсовой, деплоя и контракта
 ├── tests/                       # проверки контракта, API и VLM-парсинга
 ├── scripts/                     # сборка релиза, smoke-тест, contract verifier
 ├── Dockerfile
@@ -226,22 +225,3 @@ python3 scripts/build_release.py --check
 ```bash
 python3 scripts/smoke_api.py --base-url http://127.0.0.1:8000
 ```
-
-## Пакет для публикации
-
-Безопасный архив собирается так:
-
-```bash
-python3 scripts/build_release.py --check
-python3 scripts/build_release.py
-```
-
-Архив создаётся в `dist/coursework_release.zip`. В него не попадают данные,
-модели, результаты запусков, `.env` и виртуальное окружение.
-
-## Что показывать на защите
-
-Основной сценарий защиты описан в [docs/defense_guide.md](docs/defense_guide.md).
-В репозитории нужно показывать код, документацию, контракт API, тесты и Docker
-развёртывание. Сырые данные, полные транскрипты и runtime-артефакты на GitHub
-не публикуются.

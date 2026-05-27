@@ -13,7 +13,7 @@
 - `README.md`, `pyproject.toml`, `requirements.txt`, `requirements-server.txt`;
 - CI-конфигурация `.github/`;
 - безопасный пример окружения `.env.example`;
-- руководство для защиты `docs/defense_guide.md`.
+- безопасный скрипт сборки релиза `scripts/build_release.py`.
 
 ## Не входит в публикацию
 

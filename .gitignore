@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Local environments
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+
+# Private/heavy coursework artifacts
+data/
+models/
+output/
+dist/
+
+# Local notebooks/checkpoints
+.ipynb_checkpoints/
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

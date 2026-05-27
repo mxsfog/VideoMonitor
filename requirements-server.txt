@@ -1,0 +1,28 @@
+# CPU-only requirements для развертывания на VPS без GPU.
+# Используется в Dockerfile.
+opencv-python-headless==4.10.0.84
+numpy==1.26.4
+Pillow==11.0.0
+easyocr==1.7.2
+ffmpeg-python==0.2.0
+yt-dlp==2025.10.22
+gdown==5.2.0
+requests==2.32.3
+tqdm==4.67.1
+pandas==2.2.3
+openpyxl==3.1.5
+PyYAML==6.0.2
+rapidfuzz==3.10.1
+loguru==0.7.2
+python-dotenv==1.0.1
+# CPU torch — без CUDA
+torch==2.5.1 ; sys_platform != 'win32' or python_version < '3.13'
+torchvision==0.20.1 ; sys_platform != 'win32' or python_version < '3.13'
+# ML модели
+ultralytics==8.3.40
+faster-whisper==1.1.0
+# REST API
+fastapi==0.115.5
+uvicorn[standard]==0.32.1
+python-multipart==0.0.20
+pydantic==2.10.3

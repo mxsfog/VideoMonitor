@@ -1,0 +1,552 @@
+{
+  "report_type": "TIME_BASED_REPORT",
+  "source_info": {
+    "frameCount": 14427,
+    "fps": 30.0,
+    "video_duration_formatted": "0:08:00",
+    "analysis_timestamp": "2026-05-06T13:36:00.490631"
+  },
+  "detections": [
+    {
+      "startFrame": 173,
+      "endFrame": 223,
+      "start_time": "00:00:05",
+      "end_time": "00:00:07",
+      "time_interval": "00:00:05 - 00:00:07",
+      "subclass": "alcohol",
+      "confidence": 0.874,
+      "type": "video"
+    },
+    {
+      "startFrame": 378,
+      "endFrame": 416,
+      "start_time": "00:00:12",
+      "end_time": "00:00:13",
+      "time_interval": "00:00:12 - 00:00:13",
+      "subclass": "alcohol",
+      "confidence": 0.851,
+      "type": "video"
+    },
+    {
+      "startFrame": 601,
+      "endFrame": 680,
+      "start_time": "00:00:20",
+      "end_time": "00:00:22",
+      "time_interval": "00:00:20 - 00:00:22",
+      "subclass": "alcohol",
+      "confidence": 0.529,
+      "type": "video"
+    },
+    {
+      "startFrame": 1299,
+      "endFrame": 1333,
+      "start_time": "00:00:43",
+      "end_time": "00:00:44",
+      "time_interval": "00:00:43 - 00:00:44",
+      "subclass": "alcohol",
+      "confidence": 0.73,
+      "type": "video"
+    },
+    {
+      "startFrame": 1334,
+      "endFrame": 1363,
+      "start_time": "00:00:44",
+      "end_time": "00:00:45",
+      "time_interval": "00:00:44 - 00:00:45",
+      "subclass": "alcohol",
+      "confidence": 0.609,
+      "type": "video"
+    },
+    {
+      "startFrame": 1631,
+      "endFrame": 1694,
+      "start_time": "00:00:54",
+      "end_time": "00:00:56",
+      "time_interval": "00:00:54 - 00:00:56",
+      "subclass": "alcohol",
+      "confidence": 0.98,
+      "type": "audio"
+    },
+    {
+      "startFrame": 1694,
+      "endFrame": 1784,
+      "start_time": "00:00:56",
+      "end_time": "00:00:59",
+      "time_interval": "00:00:56 - 00:00:59",
+      "subclass": "drugs",
+      "confidence": 0.98,
+      "type": "audio"
+    },
+    {
+      "startFrame": 1784,
+      "endFrame": 1861,
+      "start_time": "00:00:59",
+      "end_time": "00:01:02",
+      "time_interval": "00:00:59 - 00:01:02",
+      "subclass": "alcohol",
+      "confidence": 0.98,
+      "type": "audio"
+    },
+    {
+      "startFrame": 1861,
+      "endFrame": 1930,
+      "start_time": "00:01:02",
+      "end_time": "00:01:04",
+      "time_interval": "00:01:02 - 00:01:04",
+      "subclass": "drugs",
+      "confidence": 0.98,
+      "type": "audio"
+    },
+    {
+      "startFrame": 1956,
+      "endFrame": 1965,
+      "start_time": "00:01:05",
+      "end_time": "00:01:05",
+      "time_interval": "00:01:05 - 00:01:05",
+      "subclass": "alcohol",
+      "confidence": 0.875,
+      "type": "video"
+    },
+    {
+      "startFrame": 1966,
+      "endFrame": 2002,
+      "start_time": "00:01:05",
+      "end_time": "00:01:06",
+      "time_interval": "00:01:05 - 00:01:06",
+      "subclass": "extremism",
+      "confidence": 0.98,
+      "type": "video"
+    },
+    {
+      "startFrame": 2128,
+      "endFrame": 2298,
+      "start_time": "00:01:10",
+      "end_time": "00:01:16",
+      "time_interval": "00:01:10 - 00:01:16",
+      "subclass": "alcohol",
+      "confidence": 0.98,
+      "type": "audio"
+    },
+    {
+      "startFrame": 2128,
+      "endFrame": 2298,
+      "start_time": "00:01:10",
+      "end_time": "00:01:16",
+      "time_interval": "00:01:10 - 00:01:16",
+      "subclass": "drugs",
+      "confidence": 0.98,
+      "type": "audio"
+    },
+    {
+      "startFrame": 2147,
+      "endFrame": 2197,
+      "start_time": "00:01:11",
+      "end_time": "00:01:13",
+      "time_interval": "00:01:11 - 00:01:13",
+      "subclass": "alcohol",
+      "confidence": 0.768,
+      "type": "video"
+    },
+    {
+      "startFrame": 2198,
+      "endFrame": 2232,
+      "start_time": "00:01:13",
+      "end_time": "00:01:14",
+      "time_interval": "00:01:13 - 00:01:14",
+      "subclass": "alcohol",
+      "confidence": 0.648,
+      "type": "video"
+    },
+    {
+      "startFrame": 2417,
+      "endFrame": 2479,
+      "start_time": "00:01:20",
+      "end_time": "00:01:22",
+      "time_interval": "00:01:20 - 00:01:22",
+      "subclass": "alcohol",
+      "confidence": 0.765,
+      "type": "video"
+    },
+    {
+      "startFrame": 2445,
+      "endFrame": 2606,
+      "start_time": "00:01:21",
+      "end_time": "00:01:26",
+      "time_interval": "00:01:21 - 00:01:26",
+      "subclass": "ludomania",
+      "confidence": 0.98,
+      "type": "audio"
+    },
+    {
+      "startFrame": 2606,
+      "endFrame": 2765,
+      "start_time": "00:01:26",
+      "end_time": "00:01:32",
+      "time_interval": "00:01:26 - 00:01:32",
+      "subclass": "drugs",
+      "confidence": 0.98,
+      "type": "audio"
+    },
+    {
+      "startFrame": 2690,
+      "endFrame": 2768,
+      "start_time": "00:01:29",
+      "end_time": "00:01:32",
+      "time_interval": "00:01:29 - 00:01:32",
+      "subclass": "alcohol",
+      "confidence": 0.735,
+      "type": "video"
+    },
+    {
+      "startFrame": 3169,
+      "endFrame": 3240,
+      "start_time": "00:01:45",
+      "end_time": "00:01:48",
+      "time_interval": "00:01:45 - 00:01:48",
+      "subclass": "extremism",
+      "confidence": 0.98,
+      "type": "video"
+    },
+    {
+      "startFrame": 3418,
+      "endFrame": 3532,
+      "start_time": "00:01:53",
+      "end_time": "00:01:57",
+      "time_interval": "00:01:53 - 00:01:57",
+      "subclass": "alcohol",
+      "confidence": 0.98,
+      "type": "audio"
+    },
+    {
+      "startFrame": 3418,
+      "endFrame": 3532,
+      "start_time": "00:01:53",
+      "end_time": "00:01:57",
+      "time_interval": "00:01:53 - 00:01:57",
+      "subclass": "ludomania",
+      "confidence": 0.98,
+      "type": "audio"
+    },
+    {
+      "startFrame": 3465,
+      "endFrame": 3489,
+      "start_time": "00:01:55",
+      "end_time": "00:01:56",
+      "time_interval": "00:01:55 - 00:01:56",
+      "subclass": "alcohol",
+      "confidence": 0.929,
+      "type": "video"
+    },
+    {
+      "startFrame": 3532,
+      "endFrame": 3689,
+      "start_time": "00:01:57",
+      "end_time": "00:02:02",
+      "time_interval": "00:01:57 - 00:02:02",
+      "subclass": "drugs",
+      "confidence": 0.98,
+      "type": "audio"
+    },
+    {
+      "startFrame": 3620,
+      "endFrame": 3655,
+      "start_time": "00:02:00",
+      "end_time": "00:02:01",
+      "time_interval": "00:02:00 - 00:02:01",
+      "subclass": "alcohol",
+      "confidence": 0.781,
+      "type": "video"
+    },
+    {
+      "startFrame": 3839,
+      "endFrame": 3994,
+      "start_time": "00:02:07",
+      "end_time": "00:02:13",
+      "time_interval": "00:02:07 - 00:02:13",
+      "subclass": "violence",
+      "confidence": 0.95,
+      "type": "audio"
+    },
+    {
+      "startFrame": 3994,
+      "endFrame": 4153,
+      "start_time": "00:02:13",
+      "end_time": "00:02:18",
+      "time_interval": "00:02:13 - 00:02:18",
+      "subclass": "drugs",
+      "confidence": 0.98,
+      "type": "audio"
+    },
+    {
+      "startFrame": 3994,
+      "endFrame": 4153,
+      "start_time": "00:02:13",
+      "end_time": "00:02:18",
+      "time_interval": "00:02:13 - 00:02:18",
+      "subclass": "violence",
+      "confidence": 0.95,
+      "type": "audio"
+    },
+    {
+      "startFrame": 4354,
+      "endFrame": 4383,
+      "start_time": "00:02:25",
+      "end_time": "00:02:26",
+      "time_interval": "00:02:25 - 00:02:26",
+      "subclass": "alcohol",
+      "confidence": 0.59,
+      "type": "video"
+    },
+    {
+      "startFrame": 4634,
+      "endFrame": 4783,
+      "start_time": "00:02:34",
+      "end_time": "00:02:39",
+      "time_interval": "00:02:34 - 00:02:39",
+      "subclass": "lgbt",
+      "confidence": 0.98,
+      "type": "audio"
+    },
+    {
+      "startFrame": 6181,
+      "endFrame": 6216,
+      "start_time": "00:03:26",
+      "end_time": "00:03:27",
+      "time_interval": "00:03:26 - 00:03:27",
+      "subclass": "smoking",
+      "confidence": 0.932,
+      "type": "video"
+    },
+    {
+      "startFrame": 6184,
+      "endFrame": 6338,
+      "start_time": "00:03:26",
+      "end_time": "00:03:31",
+      "time_interval": "00:03:26 - 00:03:31",
+      "subclass": "drugs",
+      "confidence": 0.98,
+      "type": "audio"
+    },
+    {
+      "startFrame": 6686,
+      "endFrame": 6836,
+      "start_time": "00:03:42",
+      "end_time": "00:03:47",
+      "time_interval": "00:03:42 - 00:03:47",
+      "subclass": "drugs",
+      "confidence": 0.98,
+      "type": "audio"
+    },
+    {
+      "startFrame": 6836,
+      "endFrame": 6967,
+      "start_time": "00:03:47",
+      "end_time": "00:03:52",
+      "time_interval": "00:03:47 - 00:03:52",
+      "subclass": "drugs",
+      "confidence": 0.98,
+      "type": "audio"
+    },
+    {
+      "startFrame": 7423,
+      "endFrame": 7558,
+      "start_time": "00:04:07",
+      "end_time": "00:04:11",
+      "time_interval": "00:04:07 - 00:04:11",
+      "subclass": "drugs",
+      "confidence": 0.98,
+      "type": "audio"
+    },
+    {
+      "startFrame": 7558,
+      "endFrame": 7728,
+      "start_time": "00:04:11",
+      "end_time": "00:04:17",
+      "time_interval": "00:04:11 - 00:04:17",
+      "subclass": "drugs",
+      "confidence": 0.98,
+      "type": "audio"
+    },
+    {
+      "startFrame": 8373,
+      "endFrame": 8387,
+      "start_time": "00:04:39",
+      "end_time": "00:04:39",
+      "time_interval": "00:04:39 - 00:04:39",
+      "subclass": "lgbt",
+      "confidence": 0.88,
+      "type": "video"
+    },
+    {
+      "startFrame": 8492,
+      "endFrame": 8656,
+      "start_time": "00:04:43",
+      "end_time": "00:04:48",
+      "time_interval": "00:04:43 - 00:04:48",
+      "subclass": "ludomania",
+      "confidence": 0.98,
+      "type": "audio"
+    },
+    {
+      "startFrame": 8682,
+      "endFrame": 8703,
+      "start_time": "00:04:49",
+      "end_time": "00:04:50",
+      "time_interval": "00:04:49 - 00:04:50",
+      "subclass": "smoking",
+      "confidence": 0.914,
+      "type": "video"
+    },
+    {
+      "startFrame": 9302,
+      "endFrame": 9473,
+      "start_time": "00:05:10",
+      "end_time": "00:05:15",
+      "time_interval": "00:05:10 - 00:05:15",
+      "subclass": "drugs",
+      "confidence": 0.98,
+      "type": "audio"
+    },
+    {
+      "startFrame": 9473,
+      "endFrame": 9598,
+      "start_time": "00:05:15",
+      "end_time": "00:05:19",
+      "time_interval": "00:05:15 - 00:05:19",
+      "subclass": "drugs",
+      "confidence": 0.98,
+      "type": "audio"
+    },
+    {
+      "startFrame": 9839,
+      "endFrame": 9864,
+      "start_time": "00:05:27",
+      "end_time": "00:05:28",
+      "time_interval": "00:05:27 - 00:05:28",
+      "subclass": "smoking",
+      "confidence": 0.905,
+      "type": "video"
+    },
+    {
+      "startFrame": 10032,
+      "endFrame": 10185,
+      "start_time": "00:05:34",
+      "end_time": "00:05:39",
+      "time_interval": "00:05:34 - 00:05:39",
+      "subclass": "drugs",
+      "confidence": 0.98,
+      "type": "audio"
+    },
+    {
+      "startFrame": 10032,
+      "endFrame": 10185,
+      "start_time": "00:05:34",
+      "end_time": "00:05:39",
+      "time_interval": "00:05:34 - 00:05:39",
+      "subclass": "alcohol",
+      "confidence": 0.95,
+      "type": "audio"
+    },
+    {
+      "startFrame": 10505,
+      "endFrame": 10537,
+      "start_time": "00:05:50",
+      "end_time": "00:05:51",
+      "time_interval": "00:05:50 - 00:05:51",
+      "subclass": "alcohol",
+      "confidence": 0.848,
+      "type": "video"
+    },
+    {
+      "startFrame": 10648,
+      "endFrame": 10795,
+      "start_time": "00:05:54",
+      "end_time": "00:05:59",
+      "time_interval": "00:05:54 - 00:05:59",
+      "subclass": "vandalism",
+      "confidence": 0.98,
+      "type": "audio"
+    },
+    {
+      "startFrame": 11396,
+      "endFrame": 11412,
+      "start_time": "00:06:19",
+      "end_time": "00:06:20",
+      "time_interval": "00:06:19 - 00:06:20",
+      "subclass": "alcohol",
+      "confidence": 0.98,
+      "type": "video"
+    },
+    {
+      "startFrame": 11413,
+      "endFrame": 11482,
+      "start_time": "00:06:20",
+      "end_time": "00:06:22",
+      "time_interval": "00:06:20 - 00:06:22",
+      "subclass": "alcohol",
+      "confidence": 0.754,
+      "type": "video"
+    },
+    {
+      "startFrame": 11579,
+      "endFrame": 11739,
+      "start_time": "00:06:25",
+      "end_time": "00:06:31",
+      "time_interval": "00:06:25 - 00:06:31",
+      "subclass": "drugs",
+      "confidence": 0.98,
+      "type": "audio"
+    },
+    {
+      "startFrame": 11938,
+      "endFrame": 11990,
+      "start_time": "00:06:37",
+      "end_time": "00:06:39",
+      "time_interval": "00:06:37 - 00:06:39",
+      "subclass": "alcohol",
+      "confidence": 0.969,
+      "type": "video"
+    },
+    {
+      "startFrame": 12133,
+      "endFrame": 12177,
+      "start_time": "00:06:44",
+      "end_time": "00:06:45",
+      "time_interval": "00:06:44 - 00:06:45",
+      "subclass": "extremism",
+      "confidence": 0.98,
+      "type": "video"
+    },
+    {
+      "startFrame": 12460,
+      "endFrame": 12498,
+      "start_time": "00:06:55",
+      "end_time": "00:06:56",
+      "time_interval": "00:06:55 - 00:06:56",
+      "subclass": "alcohol",
+      "confidence": 0.976,
+      "type": "video"
+    },
+    {
+      "startFrame": 12917,
+      "endFrame": 12943,
+      "start_time": "00:07:10",
+      "end_time": "00:07:11",
+      "time_interval": "00:07:10 - 00:07:11",
+      "subclass": "alcohol",
+      "confidence": 0.925,
+      "type": "video"
+    }
+  ],
+  "sourceInfo": {
+    "frameCount": 0,
+    "fps": 0,
+    "video_path": "",
+    "video_duration_seconds": 480.9,
+    "processing_time_seconds": 558.58,
+    "processing_efficiency": 1.16,
+    "video_duration_formatted": "0:08:00",
+    "processing_time_formatted": "0:09:18",
+    "analysis_timestamp": "2026-05-06T13:36:00.490773"
+  }
+}

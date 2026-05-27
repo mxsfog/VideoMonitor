@@ -1,0 +1,44 @@
+name: coursework-contract
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install lightweight test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install \
+            fastapi==0.115.5 \
+            pydantic==2.10.3 \
+            PyYAML==6.0.2 \
+            python-multipart==0.0.20 \
+            "pytest>=8,<9" \
+            "ruff>=0.15,<0.16"
+
+      - name: Ruff
+        run: |
+          ruff check src tests scripts run_pz7.py run_pz7_openrouter.py run_pz7_vlm.py
+
+      - name: Pytest
+        run: |
+          pytest -q tests
+
+      - name: Contract verifier
+        run: |
+          python scripts/verify_contract.py
+
+      - name: Release file check
+        run: |
+          python scripts/build_release.py --check

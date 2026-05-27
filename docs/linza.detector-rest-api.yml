@@ -1,0 +1,942 @@
+openapi: 3.1.0
+$schema: "https://json-schema.org/draft/2020-12/schema"
+info:
+    title: REST API Линза.Детектор
+    version: 1.0.1
+    description: |
+        Анализ видеофайла в терминах предлагаемого протокола называется
+        «задачей» (один файл = одна задача). Задача может уходить на выполнение
+        (анализ) не сразу, возможно наличие очереди входящих задач.
+        
+        После завершения анализа задача присутствует на стороне сервиса Линза.Детектор в статусе «завершена» до тех пор,
+        пока не будет получена команда, что задачу можно «забыть».
+
+components:
+    schemas:
+        JobStatus:
+            description: |
+                Состояние задачи:
+                - `PENDING` — задача находится в очереди на выполнение.
+                - `IN_PROGRESS` — задача выполняется.
+                - `DONE` — задача успешно завершена.
+                - `ERROR` — задача завершилась с ошибкой. В этом случае поле `error.message` задачи содержит текстовое описание ошибки.
+            type: string
+            enum:
+                - PENDING
+                - IN_PROGRESS
+                - DONE
+                - ERROR
+
+        Profile:
+            description: |
+                Профиль представления/вывода результата. Сервер принимает значения нечувствительно к
+                регистру. По умолчанию — `FULL`.
+            type: string
+            enum:
+                - FULL
+                - PREVIEW
+
+        Modality:
+            description: |
+                Источник определения нарушения: видео или аудио.
+            type: string
+            enum:
+                - VIDEO
+                - AUDIO
+
+        DetectionClass:
+            description: |
+                Описание класса нарушения (с подклассами, если они есть).
+                Если класс указан без подклассов, это означает, что необходимо детектировать все подклассы
+                этого класса. Пустой массив `subclasses` — это ошибка.
+            oneOf:
+                -   type: object
+                    properties:
+                        class:
+                            type: string
+                            enum: [ "DRUGS" ]
+                        subclasses:
+                            type: array
+                            items:
+                                type: string
+                                enum: [ "ALCOHOL", "SMOKING", "DRUGS", "DRUGS2KIDS" ]
+                            minItems: 1
+                    required:
+                        - class
+                -   type: object
+                    properties:
+                        class:
+                            type: string
+                            enum: [ "DEVIANT" ]
+                        subclasses:
+                            type: array
+                            items:
+                                type: string
+                                enum: [ "VANDALISM", "VIOLENCE", "SUICIDE", "KIDSSUICIDE", "OBSCENE_LANGUAGE" ]
+                            minItems: 1
+                    required:
+                        - class
+                -   type: object
+                    properties:
+                        class:
+                            type: string
+                            enum: [ "TERRORISM" ]
+                        subclasses:
+                            type: array
+                            items:
+                                type: string
+                                enum: [ "TERROR", "EXTREMISM", "TERRORCONTENT" ]
+                            minItems: 1
+                    required:
+                        - class
+                -   type: object
+                    properties:
+                        class:
+                            type: string
+                            enum: [ "SEX" ]
+                        subclasses:
+                            type: array
+                            items:
+                                type: string
+                                enum: [ "NUDE", "SEX", "KIDSPORN" ]
+                            minItems: 1
+                    required:
+                        - class
+                -   type: object
+                    properties:
+                        class:
+                            type: string
+                            enum: [ "ANTITRADITIONAL" ]
+                        subclasses:
+                            type: array
+                            items:
+                                type: string
+                                enum: [ "LGBT", "CHILDFREE" ]
+                            minItems: 1
+                    required:
+                        - class
+                -   type: object
+                    properties:
+                        class:
+                            type: string
+                            enum: [ "ANTIPATRIOTIC" ]
+                        subclasses:
+                            type: array
+                            items:
+                                type: string
+                                enum: [ "INOAGENT", "INOAGENTCONTENT", "ANTIWAR" ]
+                            minItems: 1
+                    required:
+                        - class
+                -   type: object
+                    properties:
+                        class:
+                            type: string
+                            enum: [ "LUDOMANIA" ]
+                        subclasses:
+                            type: array
+                            items:
+                                type: string
+                                enum: [ "LUDOMANIA" ]
+                            minItems: 1
+                    required:
+                        - class
+            example:
+                class: "DEVIANT"
+                subclasses:
+                    - "VANDALISM"
+                    - "VIOLENCE"
+
+        ErrorInfo:
+            type: object
+            description: "Унифицированный объект ошибки."
+            properties:
+                message:
+                    type: string
+                    description: "Текстовое описание ошибки."
+            required:
+                - message
+            example:
+                message: "Указанный ID уже существует"
+
+        JobResult:
+            description: "Результат обработки, присутствует для успешно завершённых задач (статус `DONE`)."
+            type: object
+            properties:
+                processingDurationSeconds:
+                    description: Общее время обработки задачи в секундах.
+                    type: number
+                    format: double
+                    example: 125.06939482
+                    readOnly: true
+                sourceInfo:
+                    type: object
+                    properties:
+                        frameCount:
+                            description: Общее количество кадров в видео.
+                            type: integer
+                            example: 3582
+                            readOnly: true
+                        fps:
+                            description: Частота кадров в секунду.
+                            type: number
+                            format: double
+                            example: 29.97002997
+                            readOnly: true
+                        durationSeconds:
+                            description: Продолжительность видео в секундах.
+                            type: number
+                            format: double
+                            example: 107352.647352647
+                            readOnly: true
+                    required:
+                        - frameCount
+                        - fps
+                        - durationSeconds
+                totalDetections:
+                    description: Общее количество обнаружений.
+                    type: integer
+                    example: 29
+                    readOnly: true
+                detectionClassStatistics:
+                    type: array
+                    items:
+                        type: object
+                        properties:
+                            class:
+                                description: Основной класс нарушения.
+                                type: string
+                            subclass:
+                                description: Подкласс нарушения.
+                                type: string
+                            durationFrames:
+                                description: Продолжительность эпизодов во фреймах.
+                                type: integer
+                            durationSeconds:
+                                description: Продолжительность эпизодов в секундах.
+                                type: number
+                                format: double
+                            count:
+                                description: Количество эпизодов данного нарушения.
+                                type: integer
+                            estimatedPenalty:
+                                description: Сумма штрафа и валюта.
+                                type: object
+                                properties:
+                                    amount:
+                                        description: Сумма штрафа.
+                                        type: integer
+                                    currency:
+                                        description: Валюта штрафа.
+                                        type: string
+                                        enum:
+                                            - RUB
+                                required:
+                                    - amount
+                                    - currency
+                        required:
+                            - class
+                            - subclass
+                            - durationFrames
+                            - durationSeconds
+                            - count
+                            - estimatedPenalty
+                detections:
+                    type: array
+                    items:
+                        type: object
+                        properties:
+                            startFrame:
+                                description: Номер начального кадра.
+                                type: integer
+                            endFrame:
+                                description: Номер конечного кадра.
+                                type: integer
+                            startSeconds:
+                                description: Время начала нарушения в секундах.
+                                type: number
+                                format: double
+                            endSeconds:
+                                description: Время конца нарушения в секундах.
+                                type: number
+                                format: double
+                            class:
+                                description: Основной класс нарушения.
+                                type: string
+                            subclass:
+                                description: Подкласс нарушения.
+                                type: string
+                            confidence:
+                                description: Уверенность в правильности обнаружения.
+                                type: number
+                                format: double
+                            modality:
+                                $ref: '#/components/schemas/Modality'
+                        required:
+                            - startFrame
+                            - endFrame
+                            - startSeconds
+                            - endSeconds
+                            - class
+                            - subclass
+                            - confidence
+                            - modality
+                        example:
+                            startFrame: 2345
+                            endFrame: 2374
+                            startSeconds: 78.24483333333333
+                            endSeconds: 79.21246666666667
+                            class: DRUGS
+                            subclass: ALCOHOL
+                            confidence: 0.789
+                            modality: VIDEO
+            required:
+                - processingDurationSeconds
+                - sourceInfo
+                - totalDetections
+                - detectionClassStatistics
+                - detections
+
+        JobRequest:
+            type: object
+            properties:
+                source:
+                    description: |
+                        Путь к видео файлу, анализ которого требуется выполнить. Представляет из себя абсолютный путь к файлу
+                        (который может быть, в частности, подмонтированным средствами операционной системы
+                        FTP или SMB-хранилищем), либо является URL со схемой: «smb://», «http://», «https://». В этом случае
+                        при создании задачи может присутствовать секция `sourceCredentials`.
+                    type: string
+                    example: "/net/media-dir/file_name.mp4"
+                customerId:
+                    description: Уникальный идентификатор клиента.
+                    type: string
+                    example: roga_kopyta_media
+                profile:
+                    $ref: '#/components/schemas/Profile'
+                detectionClasses:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/DetectionClass'
+                    minItems: 1
+            required:
+                - source
+                - profile
+                - detectionClasses
+
+        JobBase:
+            type: object
+            properties:
+                jobId:
+                    description: Уникальный клиентский идентификатор задачи. Служит idempotency key.
+                    type: string
+                    minLength: 1
+                    maxLength: 128
+                    example: acme-20251006-0001
+                status:
+                    $ref: '#/components/schemas/JobStatus' # Дискриминатор
+                createdAt:
+                    description: Время создания задачи.
+                    type: string
+                    format: date-time
+                    example: "2025-09-05T22:50:12Z"
+                    readOnly: true
+                request:
+                    $ref: '#/components/schemas/JobRequest'
+            required:
+                - jobId
+                - status
+                - createdAt
+                - request
+
+        JobPending:
+            allOf:
+                -   $ref: '#/components/schemas/JobBase'
+                -   type: object
+                    properties:
+                        status:
+                            const: PENDING
+                    required:
+                        - status
+
+        JobInProgress:
+            allOf:
+                -   $ref: '#/components/schemas/JobBase'
+                -   type: object
+                    properties:
+                        status:
+                            const: IN_PROGRESS
+                        startedAt:
+                            type: string
+                            format: date-time
+                    required:
+                        - status
+                        - startedAt
+
+        JobDone:
+            allOf:
+                -   $ref: '#/components/schemas/JobBase'
+                -   type: object
+                    properties:
+                        status:
+                            const: DONE
+                        startedAt:
+                            type: string
+                            format: date-time
+                            readOnly: true
+                        finishedAt:
+                            type: string
+                            format: date-time
+                            readOnly: true
+                        result:
+                            $ref: '#/components/schemas/JobResult'
+                            readOnly: true
+                    required:
+                        - status
+                        - startedAt
+                        - finishedAt
+                        - result
+
+        JobError:
+            allOf:
+                -   $ref: '#/components/schemas/JobBase'
+                -   type: object
+                    properties:
+                        status:
+                            const: ERROR
+                        startedAt:
+                            type: string
+                            format: date-time
+                            readOnly: true
+                        finishedAt:
+                            type: string
+                            format: date-time
+                            readOnly: true
+                        error:
+                            $ref: '#/components/schemas/ErrorInfo'
+                    required:
+                        - status
+                        - startedAt
+                        - finishedAt
+                        - error
+
+        Job:
+            oneOf:
+                -   $ref: '#/components/schemas/JobPending'
+                -   $ref: '#/components/schemas/JobInProgress'
+                -   $ref: '#/components/schemas/JobDone'
+                -   $ref: '#/components/schemas/JobError'
+            discriminator:
+                propertyName: status
+                mapping:
+                    PENDING: '#/components/schemas/JobPending'
+                    IN_PROGRESS: '#/components/schemas/JobInProgress'
+                    DONE: '#/components/schemas/JobDone'
+                    ERROR: '#/components/schemas/JobError'
+
+        ErrorResponse:
+            type: object
+            properties:
+                error:
+                    $ref: '#/components/schemas/ErrorInfo'
+            required:
+                - error
+            example:
+                error:
+                    message: "Указанный ID уже существует"
+
+    responses:
+        NotFound:
+            description: Указанный ресурс не найден.
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/ErrorResponse'
+                    examples:
+                        jobNotFound:
+                            summary: Задача не найдена
+                            value:
+                                error:
+                                    message: "Задача не найдена."
+                        customerNotFound:
+                            summary: Клиент не найден
+                            value:
+                                error:
+                                    message: "Клиент не найден."
+        ServerError:
+            description: Ошибка сервера.
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/ErrorResponse'
+                    example:
+                        error:
+                            message: "Ошибка на сервере."
+
+paths:
+    /api/jobs:
+        get:
+            summary: Получить список всех задач
+            description: |
+                Осуществляется запрос состояния задач.
+            responses:
+                '200':
+                    description: |
+                        Успешный ответ. Возвращает список всех задач.
+                        
+                        Присутствующие поля в зависимости от статуса задачи:
+                        - `IN_PROGRESS` — поле `startedAt`.
+                        - `DONE` — поля `startedAt`, `finishedAt`, `result`. В случае отсутствия обнаруженных сцен список `result.detections` пуст.
+                        - `ERROR` — поля `startedAt`, `finishedAt`, `error`.
+
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/Job'
+                            example:
+                                -   jobId: 899f294d-3025-49fd-9e82-37cd7227b7aa
+                                    status: PENDING
+                                    createdAt: "2025-09-05T22:50:12Z"
+                                    request:
+                                        source: smb://network-server/media-dir/file%20name.mp4
+                                        customerId: roga_kopyta_media
+                                        profile: PREVIEW
+                                        detectionClasses:
+                                            -   class: DRUGS
+                                            -   class: DEVIANT
+                                                subclasses:
+                                                    - VANDALISM
+                                                    - VIOLENCE
+                                -   jobId: 1b635301-7418-4505-9d5d-05a198bd28f2
+                                    status: DONE
+                                    createdAt: "2025-09-05T22:50:12Z"
+                                    startedAt: "2025-09-05T22:55:00Z"
+                                    finishedAt: "2025-09-05T23:17:45Z"
+                                    request:
+                                        source: "/net/media-dir/file name.mp4"
+                                        customerId: roga_kopyta_media
+                                        profile: FULL
+                                        detectionClasses:
+                                            -   class: DRUGS
+                                            -   class: DEVIANT
+                                                subclasses:
+                                                    - VANDALISM
+                                                    - VIOLENCE
+                                    result:
+                                        processingDurationSeconds: 125.06939482
+                                        sourceInfo:
+                                            frameCount: 3582
+                                            fps: 29.97002997
+                                            durationSeconds: 119.5194000001195194
+                                        totalDetections: 29
+                                        detectionClassStatistics:
+                                            -   class: DRUGS
+                                                subclass: ALCOHOL
+                                                durationFrames: 366
+                                                durationSeconds: 12.2306939482
+                                                count: 12
+                                                estimatedPenalty:
+                                                    amount: 100500
+                                                    currency: RUB
+                                            -   class: DRUGS
+                                                subclass: SMOKING
+                                                durationFrames: 336
+                                                durationSeconds: 11.2330029
+                                                count: 4
+                                                estimatedPenalty:
+                                                    amount: 9000
+                                                    currency: RUB
+                                            -   class: SEX
+                                                subclass: NUDE
+                                                durationFrames: 151
+                                                durationSeconds: 5.02390282
+                                                count: 2
+                                                estimatedPenalty:
+                                                    amount: 4500
+                                                    currency: RUB
+                                        detections:
+                                            -   startFrame: 2345
+                                                endFrame: 2374
+                                                startSeconds: 78.24483333333333
+                                                endSeconds: 79.21246666666667
+                                                class: DRUGS
+                                                subclass: ALCOHOL
+                                                confidence: 0.789
+                                                modality: VIDEO
+                                            -   startFrame: 2345
+                                                endFrame: 2374
+                                                startSeconds: 78.24483333333333
+                                                endSeconds: 79.21246666666667
+                                                class: DRUGS
+                                                subclass: SMOKING
+                                                confidence: 0.663
+                                                modality: AUDIO
+                '500':
+                    $ref: '#/components/responses/ServerError'
+        post:
+            summary: Создать новую задачу
+            requestBody:
+                description: |
+                    Для создания новой задачи клиент отправляет сервису Линза.Детектор POST-запрос.
+                    Тело запроса в формате JSON содержит информацию о задаче.
+                    
+                    После получения новой задачи сервис Линза.Детектор начинает работу над задачей
+                    либо помещает её в очередь на обработку. Клиент периодически опрашивает сервис на предмет состояния задач.
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                jobId:
+                                    description: |
+                                        Уникальный клиентский идентификатор задачи. Дальнейшее взаимодействие между клиентом
+                                        и сервисом Линза.Детектор происходит по этому идентификатору.
+                                        Рекомендуется использовать URL-safe строку наподобие `[A-Za-z0-9._~:-]+` (например UUID, CUID или собственный ключ).
+                                    type: string
+                                    minLength: 1
+                                    maxLength: 128
+                                source:
+                                    description: |
+                                        Полный путь к видео файлу, анализ которого требуется выполнить. Представляет из себя путь к файлу
+                                        (который на самом деле может быть, например, подмонтированным средствами операционной системы
+                                        FTP или SMB-хранилищем). Либо является URL со схемой «smb://». В этом случае может присутствовать
+                                        секция `sourceCredentials`.
+                                    type: string
+                                sourceCredentials:
+                                    description: Структура с информацией о подключении к сетевой директории.
+                                    type: object
+                                    properties:
+                                        login:
+                                            description: Имя пользователя.
+                                            type: string
+                                        password:
+                                            description: Пароль.
+                                            type: string
+                                        domain:
+                                            description: Домен (при организации сетевой SMB-директории на сервере Windows).
+                                            type: string
+                                    required:
+                                        - login
+                                        - password
+                                customerId:
+                                    description: Уникальный идентификатор клиента.
+                                    type: string
+                                profile:
+                                    $ref: '#/components/schemas/Profile'
+                                detectionClasses:
+                                    type: array
+                                    items:
+                                        $ref: '#/components/schemas/DetectionClass'
+                                    minItems: 1
+                            required:
+                                - jobId
+                                - source
+                                - profile
+                                - detectionClasses
+                        examples:
+                            regular:
+                                summary: Пример обычного файла
+                                value:
+                                    jobId: 1b635301-7418-4505-9d5d-05a198bd28f2
+                                    source: /net/media-dir/file name.mp4
+                                    customerId: roga_kopyta_media
+                                    profile: PREVIEW
+                                    detectionClasses:
+                                        -   class: DRUGS
+                                        -   class: DEVIANT
+                                            subclasses:
+                                                - VANDALISM
+                                                - VIOLENCE
+                            smb:
+                                summary: Пример SMB файла
+                                value:
+                                    jobId: 1b635301-7418-4505-9d5d-05a198bd28f2
+                                    source: smb://network-server/media-dir/file%20name.mp4
+                                    sourceCredentials:
+                                        login: login
+                                        password: Pa$sw0rd123!
+                                        domain: MYCOMPANY
+                                    profile: FULL
+                                    detectionClasses:
+                                        -   class: DRUGS
+            responses:
+                '201':
+                    description: Задача создана. В теле возвращается `jobId`; также устанавливается заголовок Location.
+                    headers:
+                        Location:
+                            description: URI созданного ресурса
+                            schema:
+                                type: string
+                            example: /api/jobs/acme-20251006-0001
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    jobId:
+                                        type: string
+                                required:
+                                    - jobId
+                            example:
+                                jobId: "acme-20251006-0001"
+                '400':
+                    description: Неверный запрос (например, отсутствуют обязательные поля или значение не соответствует правилам).
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                            example:
+                                error:
+                                    message: "jobId must be 1..128 chars"
+                '409':
+                    description: Конфликт — задача с указанным `jobId` уже существует.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                            example:
+                                error:
+                                    message: "Задача с указанным jobId='acme-20251006-0001' уже существует"
+                '500':
+                    $ref: '#/components/responses/ServerError'
+
+    /api/jobs/{jobId}:
+        get:
+            summary: Получить информацию о конкретной задаче
+            description: |
+                Возвращает детальную информацию по задаче, идентифицируемой `jobId`.
+                Если задача найдена — возвращается объект `Job`. Если задача не найдена — 404.
+            parameters:
+                -   in: path
+                    name: jobId
+                    description: Идентификатор задачи, переданный при создании.
+                    required: true
+                    schema:
+                        type: string
+            responses:
+                '200':
+                    description: Информация о задаче.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Job'
+                            example:
+                                jobId: "acme-20251006-0001"
+                                status: DONE
+                                createdAt: "2025-10-05T12:00:00Z"
+                                startedAt: "2025-10-05T12:05:00Z"
+                                finishedAt: "2025-10-05T12:17:45Z"
+                                request:
+                                    source: "/net/media-dir/file name.mp4"
+                                    customerId: roga_kopyta_media
+                                    profile: FULL
+                                    detectionClasses:
+                                        -   class: DRUGS
+                                        -   class: DEVIANT
+                                            subclasses:
+                                                - VANDALISM
+                                                - VIOLENCE
+                                result:
+                                    processingDurationSeconds: 765.34
+                                    sourceInfo:
+                                        frameCount: 3582
+                                        fps: 29.97002997
+                                        durationSeconds: 119.5194000001195194
+                                    totalDetections: 29
+                                    detectionClassStatistics:
+                                        -   class: DRUGS
+                                            subclass: ALCOHOL
+                                            durationFrames: 366
+                                            durationSeconds: 12.2306939482
+                                            count: 12
+                                            estimatedPenalty:
+                                                amount: 100500
+                                                currency: RUB
+                                    detections:
+                                        -   startFrame: 2345
+                                            endFrame: 2374
+                                            startSeconds: 78.24483333333333
+                                            endSeconds: 79.21246666666667
+                                            class: DRUGS
+                                            subclass: ALCOHOL
+                                            confidence: 0.789
+                                            modality: VIDEO
+                '404':
+                    $ref: '#/components/responses/NotFound'
+                '500':
+                    $ref: '#/components/responses/ServerError'
+
+        delete:
+            summary: Завершить и удалить задачу
+            description: |
+                В случае незавершённой задачи (в очереди, выполняется) вызов метода означает, что сервис Линза.Детектор
+                должен прекратить выполнение задачи и больше не включать указанную задачу в тело ответа при вызове метода
+                `GET /api/jobs`.
+                
+                В случае завершённой задачи вызов метода означает, что сервис Линза.Детектор не должен больше
+                включать указанную задачу в тело ответа при вызове метода `GET /api/jobs`.
+            parameters:
+                -   in: path
+                    name: jobId
+                    description: Идентификатор задачи, которую нужно завершить и удалить.
+                    required: true
+                    schema:
+                        type: string
+            responses:
+                '204':
+                    description: Задача завершена и удалена. Ответ не содержит тела.
+                '500':
+                    $ref: '#/components/responses/ServerError'
+
+    /api/billing/{customerId}:
+        get:
+            summary: Получить информацию о балансе и тарифе клиента
+            description: |
+                Этот эндпоинт возвращает текущий баланс клиента, информацию о тарифе и оставшиеся лимиты для анализа видео.
+                На вход подаётся идентификатор клиента (`customerId`).
+            parameters:
+                -   in: path
+                    name: customerId
+                    description: Уникальный идентификатор клиента.
+                    required: true
+                    schema:
+                        type: string
+            responses:
+                '200':
+                    description: Успешный ответ — баланс, тариф, потраченные и оставшиеся ресурсы.
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    customerId:
+                                        type: string
+                                        description: Уникальный идентификатор клиента.
+                                        example: "roga_kopyta_media"
+                                    balance:
+                                        type: object
+                                        properties:
+                                            amount:
+                                                type: number
+                                                format: double
+                                                description: Текущий баланс клиента.
+                                                example: 1500.52431
+                                            currency:
+                                                type: string
+                                                enum:
+                                                    - RUB
+                                                description: Валюта баланса.
+                                                example: "RUB"
+                                        required:
+                                            - amount
+                                            - currency
+                                    tariff:
+                                        type: object
+                                        properties:
+                                            name:
+                                                type: string
+                                                description: Название тарифа.
+                                                example: "Pro"
+                                            start:
+                                                type: string
+                                                format: date-time
+                                                description: Начало действия тарифа (inclusive).
+                                                example: "2025-01-01T00:00:00Z"
+                                            end:
+                                                type: string
+                                                format: date-time
+                                                description: Окончание действия тарифа (exclusive).
+                                                example: "2026-01-01T00:00:00Z"
+                                    billingPeriod:
+                                        type: object
+                                        properties:
+                                            start:
+                                                type: string
+                                                format: date-time
+                                                description: Начало биллингового периода (inclusive).
+                                                example: "2025-10-05T00:00:00Z"
+                                            end:
+                                                type: string
+                                                format: date-time
+                                                description: Окончание биллингового периода (exclusive).
+                                                example: "2025-11-05T00:00:00Z"
+                                        required:
+                                            - start
+                                            - end
+                                    spent:
+                                        type: object
+                                        properties:
+                                            timeMinutes:
+                                                type: integer
+                                                description: Потраченное время обработки видео (в минутах).
+                                                example: 1320
+                                            detections:
+                                                type: integer
+                                                description: Количество обнаружений (эпизодов).
+                                                example: 12500
+                                        required:
+                                            - timeMinutes
+                                            - detections
+                                    remaining:
+                                        type: object
+                                        properties:
+                                            timeMinutes:
+                                                type: integer
+                                                description: Оставшееся время обработки видео (в минутах).
+                                                example: 120
+                                            detections:
+                                                type: integer
+                                                description: Оставшееся количество обнаружений.
+                                                example: 2000
+                                        required:
+                                            - timeMinutes
+                                            - detections
+                                required:
+                                    - customerId
+                            example:
+                                customerId: roga_kopyta_media
+                                balance:
+                                    amount: 1500.52431
+                                    currency: RUB
+                                tariff:
+                                    name: Pro
+                                    start: "2025-01-01T00:00:00Z"
+                                    end: "2026-01-01T00:00:00Z"
+                                billingPeriod:
+                                    start: "2025-10-05T00:00:00Z"
+                                    end: "2025-11-05T00:00:00Z"
+                                spent:
+                                    timeMinutes: 1320
+                                    detections: 12500
+                                remaining:
+                                    timeMinutes: 120
+                                    detections: 2000
+                '404':
+                    $ref: '#/components/responses/NotFound'
+                '500':
+                    $ref: '#/components/responses/ServerError'
+
+    /api/admin/handover-access:
+        post:
+            summary: "Передача SSH-доступа"
+            description: |
+                Синхронная операция:
+                  1) останавливает сервис Линза.Детектор,
+                  2) включает предварительно настроенную SSH-учётную запись.
+            responses:
+                '204':
+                    description: "Операция успешно завершена — доступ установлен; тело отсутствует."
+                '400':
+                    description: "Неверный запрос (валидация)."
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                            example:
+                                error:
+                                    message: "Request must contain either 'sshPublicKey' or 'sshPassword' (but not both)."
+                '500':
+                    $ref: '#/components/responses/ServerError'

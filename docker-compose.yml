@@ -1,0 +1,32 @@
+services:
+  api:
+    build: .
+    container_name: destructive-api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      OPENROUTER_TIMEOUT_SECONDS: ${OPENROUTER_TIMEOUT_SECONDS:-60}
+      OPENROUTER_RETRIES: ${OPENROUTER_RETRIES:-2}
+      COURSEWORK_LLM_BACKEND: ${COURSEWORK_LLM_BACKEND:-none}
+      COURSEWORK_LLM_MODEL: ${COURSEWORK_LLM_MODEL:-qwen3.5:9b}
+      COURSEWORK_PIPELINE_FPS: ${COURSEWORK_PIPELINE_FPS:-1.0}
+      COURSEWORK_VLM_EVERY_N: ${COURSEWORK_VLM_EVERY_N:-5}
+      COURSEWORK_PIPELINE_SKIP: ${COURSEWORK_PIPELINE_SKIP:-}
+      COURSEWORK_WHISPER_MODEL: ${COURSEWORK_WHISPER_MODEL:-tiny}
+      COURSEWORK_LANG: ${COURSEWORK_LANG:-ru}
+      COURSEWORK_SMB_MOUNT_ROOT: ${COURSEWORK_SMB_MOUNT_ROOT:-}
+      COURSEWORK_HANDOVER_COMMAND: ${COURSEWORK_HANDOVER_COMMAND:-}
+      COURSEWORK_ALLOW_HANDOVER_NOOP: ${COURSEWORK_ALLOW_HANDOVER_NOOP:-}
+      PYTHONIOENCODING: utf-8
+    volumes:
+      - ./data:/app/data
+      - ./output:/app/output
+      - ./models:/app/models
+      - ./smb:/app/smb:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
